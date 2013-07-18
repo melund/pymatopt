@@ -21,8 +21,12 @@ function [x,fval] = doOptim(f, x0, A, B, Aeq, Beq, LB, UB, nc, c, nceq, ceq)
     % Call fmincon
     opts = optimoptions('fmincon', 'Algorithm','active-set');
     opts = optimoptions(opts,'Display','iter');
+    opts = optimoptions(opts,'UseParallel','always');
     %opts = optimset(opts,'MaxFunEvals',maxfun);
     opts = optimoptions(opts,'PlotFcns' ,{@optimplotx @optimplotfval,@optimplotfunccount,@optimplotconstrviolation,@optimplotstepsize});
 
+    matlabpool(6)
     [x,fval] = fmincon(fWrapper,x0,A,B,Aeq,Beq,LB,UB,@confun,opts);
+    matlabpool close
+
 end
